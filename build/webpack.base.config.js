@@ -82,17 +82,16 @@ module.exports = {
         test: /\.html$/,
         use: [{ loader: "html-loader" }]
       },
-      {
-        //处理handlebar
-        test: /\.handlebars$/,
-        use: [{ loader: "handlebars-loader" }]
-      },
+
+      // {
+      //   test: /\.js$/,
+      //   use: ["babel-loader"],
+      //   exclude: resolve("node_modules")
+      //   include: resolve("src")
+      // },
       {
         test: /\.js$/,
-        loader: { loader: "babel-loader" },
-        exclude: resolve("node_modules"),
-        // include: resolve("src")`
-        // include: path.join(__dirname, "src") //包含的路径（匹配特定条件）
+        use: ["babel-loader"]
       },
       {
         //处理字体
@@ -102,11 +101,7 @@ module.exports = {
           { loader: "file-loader?limit=1024&name=fonts/[name].[ext]" } //加载器file-loader和npm run build之后字体的存储文件夹
         ]
       },
-      {
-        test: /\.art$/,
-        loader: "art-template-loader",
-        options: {}
-      },
+
       {
         test: /\.ejs$/,
         use: ["ejs-html-loader"]
