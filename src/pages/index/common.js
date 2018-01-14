@@ -1,3 +1,5 @@
-export function show() {
-  alert(123)
-}
+module.exports = {
+  test() { 
+    alert(`0123`);
+  }
+};

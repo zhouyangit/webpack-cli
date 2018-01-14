@@ -1,12 +1,13 @@
 import bxslider from "common/js/jquery.bxslider";
 import 'common/css/jquery.bxslider.css'
 import "./crawler_index.less";
-import {show} from "./common";
+import test from "./common";
+console.log(test)
 
 $(function() {
   let zhouyang = '123test';
   console.log(zhouyang);
- show();
+ test.test();
   $(".m-slider").bxSlider({
     auto: true,
     controls: false,
