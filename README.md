@@ -9,9 +9,9 @@
 ```
 git clone https://github.com/zhouyangit/webpack-cli.git
 
-$ cd webpack-cli
+cd webpack-cli
 
-$ npm install
+npm install
 
 ```
 
@@ -25,7 +25,6 @@ npm run dev
 
 ```
 npm run build
-
 ```
 
 ## 目录结构
