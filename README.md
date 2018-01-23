@@ -29,6 +29,8 @@ npm run build
 
 ## 目录结构
 
+![项目目录结构](https://github.com/zhouyangit/webpack-cli/blob/master/src/assets/images/WX20180123-085801@2x.png?raw=true)
+
 ## 插件列表
 
 
