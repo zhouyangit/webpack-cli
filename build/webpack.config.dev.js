@@ -1,12 +1,11 @@
-const baseWebpackConfig = require("./webpack.base.config.js");
-
-const path = require("path");
 const webpack = require("webpack");
+const path = require("path");
+
+const baseWebpackConfig = require("./webpack.base.config.js");
 const merge = require("webpack-merge");
 
 module.exports = merge(baseWebpackConfig, {
-  // 输出 source-map 方便直接调试 ES6 源码
-  devtool: "source-map",
+  devtool: "cheap-module-eval-source-map",
 
   // 只有在开启监听模式时，watchOptions 才有意义
   // 默认为 false，也就是不开启
@@ -33,12 +32,8 @@ module.exports = merge(baseWebpackConfig, {
     host: "0.0.0.0",
     open: true,
     // hot: true
-  }
-  // plugins: [
-  //   new webpack.ProvidePlugin({
-  //     $: "jquery", //jquery
-  //     jQuery: "jquery",
-  //     "window.jQuery": "jquery"
-  //   })
-  // ]
+  },
+  plugins: [
+    // new webpack.HotModuleReplacementPlugin()
+  ]
 });

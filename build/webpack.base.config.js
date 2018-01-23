@@ -1,11 +1,9 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
-const glob = require("glob");
-const PurifyCSSPlugin = require("purifycss-webpack");
-const CopyWebpackPlugin = require('copy-webpack-plugin'); 
 
-// 因为自己改变了文件的路径，这里需要重新处理一下
+// const CopyWebpackPlugin = require('copy-webpack-plugin'); 
+
 function resolve(dir) {
   return path.join(__dirname, "..", dir);
 }
@@ -17,13 +15,12 @@ const entryJSON = require("../config/entry.json");
 let plugins = entryJSON.map(page => {
   return new HtmlWebpackPlugin({
     filename: resolve(`/dist/${page.url}.html`),
-    template: `ejs-render-loader!./src/pages/${page.url}/index.ejs`,
-    chunks: [page.url, "foo"],  // 实现多入口的核心，决定自己加载哪个js文件，这里的 page.url 指的是 entry 对象的 key 所对应的入口打包出来的js文件
-    // minify: false,   // 压缩，如果启用这个的话，需要使用html-minifier，不然会直接报错
+    template: resolve(`src/pages/${page.url}/index.html`),
+    chunks: [page.url, "base"],
     minify: {
-      caseSensitive: false, //是否大小写敏感
-      collapseBooleanAttributes: true, //是否简写boolean格式的属性如：disabled="disabled" 简写为disabled 
-      collapseWhitespace: true //是否去除空格
+      caseSensitive: false,
+      collapseBooleanAttributes: true, 
+      collapseWhitespace: true
     },
   });
 });
@@ -40,7 +37,7 @@ entryJSON.map(page => {
 module.exports = {
   entry: entry,
   output: {
-    path: path.join(__dirname, "../dist/"),
+    path: resolve('dist'),
     filename: "js/[name]_[chunkhash:8].js"
   },
   module: {
@@ -54,6 +51,10 @@ module.exports = {
         })
       },
       {
+        test: /\.(htm|html)$/i,
+        loader: 'html-withimg-loader'
+      },
+      {
         test: /\.less$/,
         use: ExtractTextPlugin.extract({
           fallback: "style-loader",
@@ -63,45 +64,24 @@ module.exports = {
       },
       {
         test: /\.(png|svg|jpg|jpeg|gif)$/,
-        // use: [
-        //   {
-        //     loader: "url-loader",
-        //     options: { limit: 307200, outputPath: "images/" }
-        //   }
-        // ],
         use: [
-          { loader: "file-loader?limit=1024&name=images/[name].[ext]" } //加载器file-loader和npm run build之后 图片的存储文件夹
-        ]
+          {
+            loader: "url-loader",
+            options: { limit: 20480, outputPath: "images/" }
+          }
+        ],
       },
-      // {
-      //   test: /\.html$/,
-      //   use: [{ loader: "html-withimg-loader" }]
-      // },
-      {
-        //处理html，插入在html中的图片img用此处理
-        test: /\.html$/,
-        use: [{ loader: "html-loader" }]
-      },
-
-      // {
-      //   test: /\.js$/,
-      //   use: ["babel-loader"],
-      //   exclude: resolve("node_modules")
-      //   include: resolve("src")
-      // },
       {
         test: /\.js$/,
-        use: ["babel-loader"]
+        use: ["babel-loader"],
+        include:resolve('src')
       },
       {
-        //处理字体
         test: /\.(woff|woff2|eot|ttf|otf)$/,
         use: [
-          // 'file-loader'//等同于{loader:'file-loader'}
-          { loader: "file-loader?limit=1024&name=fonts/[name].[ext]" } //加载器file-loader和npm run build之后字体的存储文件夹
+          { loader: "file-loader?limit=1024&name=fonts/[name].[ext]" }
         ]
       },
-
       {
         test: /\.ejs$/,
         use: ["ejs-html-loader"]
@@ -110,20 +90,21 @@ module.exports = {
   },
 
   resolve: {
-    extensions: [".js", ".less", ".css"],
+    extensions: [".js", ".less", ".json"],
 
     alias: {
-      common: "../../common"
+      common: "../../common",
+      assets:resolve('src/assets')
     }
   },
 
   plugins: [
-    new CopyWebpackPlugin([
-      {
-        from: "./src/common/images",
-        to: path.resolve(__dirname, "../dist/images")
-      }
-    ]),
+    // new CopyWebpackPlugin([
+    //   {
+    //     from: "./src/images",
+    //     to: path.resolve(__dirname, "../dist/images")
+    //   }
+    // ]),
 
     new ExtractTextPlugin({
       //从bundle中提取出
@@ -132,6 +113,9 @@ module.exports = {
       },
       disable: false //禁用插件为false
       // allChunks:true
-    })
+    }),
+    // new PurifyCSSPlugin({
+    //   paths: glob.sync(resolve('src/*/*/*.ejs')),
+    // })
   ].concat(plugins)
 };
